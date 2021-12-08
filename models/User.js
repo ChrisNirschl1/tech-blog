@@ -23,18 +23,31 @@ User.init({
             len:[8]
         }
     },
-},{
-    sequelize,
-    hooks:{
-        beforeCreate:userObj=>{
-            userObj.password = bcrypt.hashSync(userObj.password,5);
-            return userObj
-        },
-        beforeUpdate:userObj=>{
-            userObj.password = bcrypt.hashSync(userObj.password,5);
-            return userObj
-        }
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+        allowNull:false
     }
-});
+},
+{
+  hooks: {
+    
+    beforeCreate: async (newUserData) => {
+      newUserData.password = await bcrypt.hash(newUserData.password, 5);
+      return newUserData;
+    },
+    beforeUpdate: async (updatedUserData) => {
+      updatedUserData.password = await bcrypt.hash(updatedUserData.password, 5);
+      return updatedUserData;
+    }
+  },
+  sequelize,
+  timestamps: false,
+  freezeTableName: true,
+  underscored: true,
+  modelName: 'User'
+}
+);
 
 module.exports=User
